@@ -258,6 +258,6 @@ $RECYCLE.BIN/
 *.lnk
 
 all-filings_complete.csv
-complaints.sqlite3
+bootstrap.sh
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,osx,visualstudiocode,python,jupyternotebooks
