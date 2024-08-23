@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 
 from flask import Flask, jsonify, request
+import math
 
 app = Flask(__name__)
 
@@ -58,13 +59,34 @@ class Complaints(db.Model):
 
 @app.route('/complaints')
 def complaint():
-    entries = Complaints.query.filter_by(**request.args)
+
+    # read in request arguments, default to preset values if not present
+    show = int(request.args['show']) if 'show' in request.args else 20
+    page = int(request.args['page']) if 'page' in request.args else 0
+
+    # clone all the other arguments into a dictionary by which to filter the data
+    entry_filter = request.args.copy()
+    entry_filter.pop('show',None)
+    entry_filter.pop('page',None)
+
+    # pull out all the entries that match the filter and convert them to readable format
+    entries = Complaints.query.filter_by(**entry_filter)
+    all_cases = [{var:getattr(entry,var) for var in entry.return_fields()} for entry in entries]
+
+    last_page = math.ceil(len(all_cases) / show) - 1
+
+    # slice out the ones to return
+    displayed_cases = all_cases[page*show:(page*show)+show]
 
     result = {
-        getattr(entry,'Case_Number'):{
-            var:getattr(entry,var) for var in entry.return_fields()
-        }
-        for entry in entries
+        'metadata':{
+            'total_results':len(all_cases),
+            'results_shown':len(displayed_cases),
+            'last_page':last_page,
+            'current_page':page
+        },
+        'cases':displayed_cases,
+        'status':'ok' if page <= last_page else 'exceeded last page of data'
     }
 
     return jsonify(result)
