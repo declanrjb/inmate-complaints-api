@@ -10,7 +10,7 @@ WORKDIR /usr/src/app
 COPY Pipfile bootstrap.sh ./
 
 # Install API dependencies
-RUN pipenv install --deploy
+RUN pipenv install --deploy --system
 
 # Start app
 EXPOSE 5000
