@@ -97,7 +97,6 @@ class Complaints(db.Model):
 # no modification required beyond function made
 @app.route('/complaints')
 def complaint():
-
     # read in request arguments, default to preset values if not present
     show = int(request.args['show']) if 'show' in request.args else 20
     page = int(request.args['page']) if 'page' in request.args else 0
@@ -106,6 +105,7 @@ def complaint():
     entry_filter = request.args.copy()
     entry_filter.pop('show',None)
     entry_filter.pop('page',None)
+    entry_filter.pop('cols',None)
 
     # permute combined filters to match sqlite requirements
     entry_filter = dict_listify(entry_filter)
@@ -116,7 +116,12 @@ def complaint():
     for permuted_filter in permuted_filters:
         # change complaints to the name of the current database
         entries = Complaints.query.filter_by(**permuted_filter)
-        cases = [{var:getattr(entry,var) for var in entry.return_fields()} for entry in entries]
+
+        if 'cols' in request.args:
+            cases = [{var:getattr(entry,var) for var in request.args['cols'].split(',')} for entry in entries]
+        else:
+            cases = [{var:getattr(entry,var) for var in entry.return_fields()} for entry in entries]
+        
         all_cases = all_cases + cases
 
     last_page = math.ceil(len(all_cases) / show) - 1

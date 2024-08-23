@@ -40,15 +40,35 @@ var myList = [
     return columnSet;
   }
 
+function makeRequest(parameters,base='https://inmate-complaints-api-1.onrender.com/complaints') {
+    var request = base + '?'
+
+    $.each(parameters, function(key, value) {
+        request += key + '=' + value + '&'
+    })
+    
+    if (request[request.length-1] == '&') {
+        request = request.slice(0,request.length-1)
+    }
+
+    return(request)
+}
+
 $(function() {
+
+    var rows = 10
 
     $('.row').height($(document).height() - 20)
 
-    $.getJSON('https://inmate-complaints-api-1.onrender.com/complaints?Case_Status=Accepted', function(data) {
-        console.log(data)
-    })
+    $.getJSON(makeRequest({'Case_Status':'Accepted',
+                            'show':10}), 
+        function(data) {
+            console.log(data['cases'])
+            buildHtmlTable('#data-table',data['cases'])
+        }
+    )
 
-    buildHtmlTable('#data-table',myList)
+
  
 });
 
