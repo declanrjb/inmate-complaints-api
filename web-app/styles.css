@@ -1,0 +1,25 @@
+.row {
+    width: 100%;
+}
+
+.column {
+    float: left;
+    min-height: 100px;
+    box-sizing: border-box;
+}
+
+#control-column {
+    width: 20%;
+}
+
+#table-column {
+    width: 80%;
+}
+
+#data-table {
+    width: 100%;
+}
+
+td {
+    border: 1px solid grey;
+}

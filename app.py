@@ -135,7 +135,10 @@ def complaint():
         'status':'ok' if page <= last_page else 'exceeded last page of data'
     }
 
-    return jsonify(result)
+    response = jsonify(result)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return jsonify(response)
 
 if __name__ == '__main__':
     app.run(debug=True)
