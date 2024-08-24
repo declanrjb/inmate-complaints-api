@@ -43,6 +43,8 @@ var myList = [
 function makeRequest(parameters,base='https://inmate-complaints-api-1.onrender.com/complaints') {
     var request = base + '?'
 
+    request += 'cols=' + ['Case_Number','Case_Status','Subject_Primary','Facility_Occurred','Received_Date','State'].join(',') + '&'
+
     $.each(parameters, function(key, value) {
         request += key + '=' + value + '&'
     })
@@ -54,21 +56,157 @@ function makeRequest(parameters,base='https://inmate-complaints-api-1.onrender.c
     return(request)
 }
 
-$(function() {
+function tableStriationReset() {
+    $('tr').each(function(index) {
+        if ((index % 2) != 0) {
+            $(this).css('background-color','#f6f6f6')
+        } else {
+            $(this).css('background-color','white')
+        }
+    })
+}
 
-    var rows = 10
+function updateTable(data) {
+    showLoader()
+    currentData = data
+    $('#data-table').empty()
+    buildHtmlTable('#data-table',data['cases'])
+    tableStriationReset()
+    stopLoader()
+    $('tr').on('click', function() {
+        tableStriationReset()
+        $(this).css('background-color','lightblue')
+    })
+    $('th').each(function() {
+        $(this).text($(this).text().replace('_',' '))
+    })
+}
 
-    $('.row').height($(document).height() - 20)
+var backData = null;
+var frontData = null;
+var currentData = null;
+var lastPage = 1
 
-    $.getJSON(makeRequest({'Case_Status':'Accepted',
-                            'show':10}), 
+function updateDataLite() {
+    showLoader()
+    $.getJSON(makeRequest(
+        {
+            'Case_Status':'Accepted',
+            'show':$('#show-counter').val(),
+            'page':$('#page-counter').val()
+        }), 
         function(data) {
-            console.log(data['cases'])
-            buildHtmlTable('#data-table',data['cases'])
+            lastPage = data['metadata']['last_page']
+            stopLoader()
+            updateTable(data)
         }
     )
+}
 
+function updateDataCached() {
+    showLoader()
+    $.getJSON(makeRequest(
+        {
+            'Case_Status':'Accepted',
+            'show':$('#show-counter').val(),
+            'page':$('#page-counter').val()+1
+        }), 
+        function(data) {
+            frontData = data
+        }
+    )
+    $.getJSON(makeRequest(
+        {
+            'Case_Status':'Accepted',
+            'show':$('#show-counter').val(),
+            'page':$('#page-counter').val()-1
+        }), 
+        function(data) {
+            backData = data
+            stopLoader()
+        }
+    )
+}
 
+function showLoader() {
+    $('.loading').css('display','block')
+    $('.button').attr('disabled','disabled')
+}
+
+function stopLoader() {
+    $('.loading').css('display','none')
+    $('.button').removeAttr('disabled')
+}
+
+$(function() {
+
+    $('.row').height($(document).height() - 20)
+    
+    updateDataLite()
+    updateDataCached()
+
+    $('#show-counter').on('input', function() {
+        updateDataLite()
+    })
+
+    $('#page-counter').on('input', function() {
+        updateDataLite()
+        updateDataCached()
+    })
+
+    /* left button behavior */
+    $('#left-button').on('click', function() {
+        if (!($(this).attr('disabled') == 'disabled') && ($('#page-counter').val() >= 2)) {
+            $('#page-counter').val(parseInt($('#page-counter').val())-1)
+            if (backData != currentData) {
+                updateTable(backData)
+            } else {
+                updateDataLite()
+            }
+            updateDataCached()
+        }
+    })
+
+    /* left button hover styling */
+    $('#left-button>i').on('mouseleave', function() {
+        $(this).removeClass('fa-circle-arrow-left').removeClass('fa-solid')
+        $(this).addClass('fa-regular').addClass('fa-circle-left')
+    })
+
+    $('#left-button>i').on('mouseenter', function() {
+        $(this).addClass('fa-circle-arrow-left').addClass('fa-solid')
+        $(this).removeClass('fa-regular').removeClass('fa-circle-left')
+    })
+
+    /* right button behavior */
+    $('#right-button').on('click', function() {
+        if (!($(this).attr('disabled') == 'disabled') && ($('#page-counter').val() <= lastPage)) {
+            $('#page-counter').val(parseInt($('#page-counter').val())+1)
+            if (currentData != frontData) {
+                updateTable(frontData)
+            } else {
+                updateDataLite()
+            }
+            updateDataCached()
+        }
+    })
+
+    /* right button hover styling */
+    $('#right-button>i').on('mouseleave', function() {
+        $(this).removeClass('fa-circle-arrow-right').removeClass('fa-solid')
+        $(this).addClass('fa-regular').addClass('fa-circle-right')
+    })
+
+    $('#right-button>i').on('mouseenter', function() {
+        $(this).addClass('fa-circle-arrow-right').addClass('fa-solid')
+        $(this).removeClass('fa-regular').removeClass('fa-circle-right')
+    })
+
+    $(".chosen-select").chosen({
+        no_results_text: "Oops, nothing found!"
+      })
+
+    
  
 });
 

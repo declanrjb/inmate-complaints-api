@@ -8,15 +8,41 @@
 <link rel="shortcut icon" type="image/x-icon" href="">
 <script src="https://kit.fontawesome.com/bb1d08a9b2.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet"/>
 </head>
 <body>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
     <div class="row">
         <div class="column" id="control-column">
-
+            <a href="https://www.data-liberation-project.org/" style="text-decoration: none;"><p class="brand-tag">Data Liberation Project</p></a>
+            <h2 class="page-title">Inmate Complaints</h2>
+            <p class="about-dashboard">Exploratory analysis interface. Developed by Declan Bradley <i class="fa-brands fa-github"></i></p>
+                <select data-placeholder="Begin typing a name to filter..." multiple class="chosen-select" name="test">
+                    <option value=""></option>
+                    <option>American Black Bear</option>
+                    <option>Asiatic Black Bear</option>
+                    <option>Brown Bear</option>
+                    <option>Giant Panda</option>
+                    <option>Sloth Bear</option>
+                    <option>Sun Bear</option>
+                    <option>Polar Bear</option>
+                    <option>Spectacled Bear</option>
+                </select>
         </div>
         <div class="column" id="table-column">
+            <div class="table-control">
+                <div class="show-wrapper">Show <input type="number" class="counter" id="show-counter" min="10" max="100" value=15> rows</div>
+                <div class="loading rotating"><i class="fa-solid fa-spinner"></i></div>
+            </div>
             <table id="data-table"></table>
+            <div class="page-control">
+                <div class="page-count-wrapper">
+                    <div class="button" id="left-button"><i class="fa-regular fa-circle-left"></i></div>
+                    <input type="text" class="counter" id="page-counter" min=0 value=0 inputmode="numeric">
+                    <div class="button" id="right-button"><i class="fa-regular fa-circle-right"></i></div>
+                </div>
+            </div>
         </div>
     </div>
 </body>

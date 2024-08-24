@@ -9,17 +9,135 @@
 }
 
 #control-column {
-    width: 20%;
+    width: 18%;
 }
 
 #table-column {
-    width: 80%;
+    width: 82%;
 }
 
 #data-table {
     width: 100%;
+    text-align: left;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    border-collapse: collapse;
 }
 
-td {
-    border: 1px solid grey;
+tr {
+    border-bottom: 1px solid lightgrey;
 }
+
+tr:hover {
+    background-color: lightblue !important;
+}
+
+td, th {
+    padding: 10px;
+}
+
+th {
+    padding-bottom: 5px;
+    background-color: white !important;
+}
+
+.counter {
+    padding: 2px;
+}
+
+.page-control {
+    margin-top: 10px;
+}
+
+.page-count-wrapper {
+    float: right;
+}
+
+.page-count-wrapper>* {
+    float: left;
+}
+
+#page-counter {
+    width: 30px;
+    text-align: center;
+}
+
+.button {
+    margin-left: 5px;
+    margin-right: 5px;
+    margin-top: 2px;
+    font-size: 1.2em;
+}
+
+.button[disabled] {
+    color: grey;
+}
+
+.loading {
+    float: right;
+    display: none;
+}
+
+.show-wrapper {
+    float: left;
+}
+
+.brand-tag {
+    font-weight: bold;
+    background-color: #ffdd00;
+    padding: 10px;
+    width: fit-content;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 5px;
+    color: black;
+}
+
+.page-title {
+    margin: 5px;
+    font-weight: normal;
+    font-size: 1.75em;
+}
+
+.about-dashboard {
+    margin-top: 5px;
+    margin-left: 5px;
+}
+
+@-webkit-keyframes rotating /* Safari and Chrome */ {
+    from {
+      -webkit-transform: rotate(0deg);
+      -o-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    to {
+      -webkit-transform: rotate(360deg);
+      -o-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+  @keyframes rotating {
+    from {
+      -ms-transform: rotate(0deg);
+      -moz-transform: rotate(0deg);
+      -webkit-transform: rotate(0deg);
+      -o-transform: rotate(0deg);
+      transform: rotate(0deg);
+    }
+    to {
+      -ms-transform: rotate(360deg);
+      -moz-transform: rotate(360deg);
+      -webkit-transform: rotate(360deg);
+      -o-transform: rotate(360deg);
+      transform: rotate(360deg);
+    }
+  }
+  .rotating {
+    -webkit-animation: rotating 2s linear infinite;
+    -moz-animation: rotating 2s linear infinite;
+    -ms-animation: rotating 2s linear infinite;
+    -o-animation: rotating 2s linear infinite;
+    animation: rotating 2s linear infinite;
+  }
