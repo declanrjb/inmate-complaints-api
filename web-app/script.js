@@ -83,8 +83,7 @@ function appendBackendArgs(argDict,pageOffset=0) {
                                 argDict,
                                 {
                                     'show':$('#show-counter').val(),
-                                    /*'page':Math.min(($('#page-counter').val()-1+pageOffset),0)*/
-                                    'page':0
+                                    'page':Math.max(($('#page-counter').val()-1+pageOffset),0),
                                 }
                             )
     return(result)
@@ -96,6 +95,7 @@ var currentData = null;
 var lastPage = 1
 
 function updateDataLite(additionalArgs={}) {
+    console.log('updating data')
     showLoader()
     $.getJSON(makeRequest(appendBackendArgs(additionalArgs)), 
         function(data) {
@@ -104,6 +104,11 @@ function updateDataLite(additionalArgs={}) {
             updateTable(data)
         }
     )
+    .fail(function() { 
+        console.log('update data lite api call error, retrying')
+        stopLoader()
+        updateDataLite()
+     })
 }
 
 function updateDataCached(additionalArgs={}) {
@@ -140,32 +145,58 @@ function concatOptions(j_obj) {
     return(result)
 }
 
+function generateFilters() {
+    var filters = {}
+        $('.chosen-container').each(function() {
+            if ($(this).attr('title') != 'Show_Columns') {
+                var optionArgForm = concatOptions($(this))
+                if (optionArgForm.length > 0) {
+                    filters[$(this).attr('title')] = optionArgForm
+                }
+            }
+        })
+    return(filters)
+}
+
+console.log('the code is running')
+
 $(function() {
 
     $('.row').height($(document).height() - 20)
+
+    $(".chosen-select").chosen({
+        no_results_text: "Oops, nothing found!"
+      })
+
+    $('.submit-button').on('click', function() {
+        filters = generateFilters()
+        updateDataLite(filters)
+        updateDataCached(filters)
+    })
     
-    updateDataLite()
-    updateDataCached()
+    console.log('calling function')
+    updateDataLite(generateFilters())
+    updateDataCached(generateFilters())
 
     $('#show-counter').on('input', function() {
-        updateDataLite()
+        updateDataLite(generateFilters())
     })
 
     $('#page-counter').on('input', function() {
-        updateDataLite()
-        updateDataCached()
+        updateDataLite(generateFilters())
+        updateDataCached(generateFilters())
     })
 
     /* left button behavior */
     $('#left-button').on('click', function() {
         if (!($(this).attr('disabled') == 'disabled') && ($('#page-counter').val() >= 2)) {
             $('#page-counter').val(parseInt($('#page-counter').val())-1)
-            if (backData != currentData) {
+            if ((backData != null) && (backData != currentData)) {
                 updateTable(backData)
             } else {
-                updateDataLite()
+                updateDataLite(generateFilters())
             }
-            updateDataCached()
+            updateDataCached(generateFilters())
         }
     })
 
@@ -184,12 +215,12 @@ $(function() {
     $('#right-button').on('click', function() {
         if (!($(this).attr('disabled') == 'disabled') && ($('#page-counter').val() <= lastPage)) {
             $('#page-counter').val(parseInt($('#page-counter').val())+1)
-            if (currentData != frontData) {
+            if ((frontData != null) && (currentData != frontData)) {
                 updateTable(frontData)
             } else {
-                updateDataLite()
+                updateDataLite(generateFilters())
             }
-            updateDataCached()
+            updateDataCached(generateFilters())
         }
     })
 
@@ -204,21 +235,7 @@ $(function() {
         $(this).removeClass('fa-regular').removeClass('fa-circle-right')
     })
 
-    $(".chosen-select").chosen({
-        no_results_text: "Oops, nothing found!"
-      })
 
-    $('.submit-button').on('click', function() {
-        var filters = {}
-        $('.chosen-container').each(function() {
-            if ($(this).attr('title') != 'Show_Columns') {
-                var optionArgForm = concatOptions($(this))
-                if (optionArgForm.length > 0) {
-                    filters[$(this).attr('title')] = optionArgForm
-                }
-            }
-        })
-    })
 
     
  

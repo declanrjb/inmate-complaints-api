@@ -5,6 +5,7 @@ import os
 from flask import Flask, jsonify, request
 import math
 import itertools
+import numpy
 
 # data processing functions
 def dict_listify(dictionary):
@@ -39,6 +40,13 @@ def dict_permute(dictionary):
         permuted_dicts.append(new_dict)
     
     return permuted_dicts
+
+def unique(ls):
+    output = []
+    for x in ls:
+        if x not in output:
+            output.append(x)
+    return output
 
 # begin app definition
 app = Flask(__name__)
@@ -101,6 +109,9 @@ def complaint():
     show = int(request.args['show']) if 'show' in request.args else 20
     page = int(request.args['page']) if 'page' in request.args else 0
 
+    segment_start = page*show
+    segment_end = (page*show)+show
+
     # clone all the other arguments into a dictionary by which to filter the data
     entry_filter = request.args.copy()
     entry_filter.pop('show',None)
@@ -113,33 +124,32 @@ def complaint():
         permuted_filters = dict_permute(entry_filter)
 
         # pull out all the entries that match the filter and convert them to readable format
-        all_cases = []
+        all_entries = []
         for permuted_filter in permuted_filters:
             # change complaints to the name of the current database
             entries = Complaints.query.filter_by(**permuted_filter)
-
-            if 'cols' in request.args:
-                cases = [{var:getattr(entry,var) for var in request.args['cols'].split(',')} for entry in entries]
-            else:
-                cases = [{var:getattr(entry,var) for var in entry.return_fields()} for entry in entries]
             
-            all_cases = all_cases + cases
+            all_entries = all_entries + list(entries)
+
+            if len(all_entries) >= segment_end:
+                break
+            
     else:
-        entries = Complaints.query.all()
-        if 'cols' in request.args:
-            cases = [{var:getattr(entry,var) for var in request.args['cols'].split(',')} for entry in entries]
-        else:
-            cases = [{var:getattr(entry,var) for var in entry.return_fields()} for entry in entries]
-        all_cases = cases
+        all_entries = Complaints.query.all()
 
-    last_page = math.ceil(len(all_cases) / show) - 1
+    displayed_entries = all_entries[segment_start:segment_end]
+    if 'cols' in request.args:
+        displayed_cases = [{var:getattr(entry,var) for var in request.args['cols'].split(',')} for entry in displayed_entries]
+    else:
+        displayed_cases = [{var:getattr(entry,var) for var in entry.return_fields()} for entry in displayed_entries]
 
-    # slice out the ones to return
-    displayed_cases = all_cases[page*show:(page*show)+show]
+    total_entries = len(list(all_entries))
+
+    last_page = math.ceil(total_entries / show) - 1
 
     result = {
         'metadata':{
-            'total_results':len(all_cases),
+            'total_results':total_entries,
             'results_shown':len(displayed_cases),
             'last_page':last_page,
             'current_page':page
