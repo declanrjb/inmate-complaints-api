@@ -145,19 +145,19 @@ def complaint():
     else:
         displayed_cases = [{var:getattr(entry,var) for var in entry.return_fields()} for entry in displayed_entries]
 
-    total_entries = len(list(all_entries))
+    #total_entries = len(list(all_entries))
 
-    last_page = math.ceil(total_entries / show) - 1
+    #last_page = math.ceil(total_entries / show) - 1
 
     result = {
         'metadata':{
-            'total_results':total_entries,
+            #'total_results':total_entries,
             'results_shown':len(displayed_cases),
-            'last_page':last_page,
+            #'last_page':last_page,
             'current_page':page
         },
         'cases':displayed_cases,
-        'status':'ok' if page <= last_page else 'exceeded last page of data'
+        #'status':'ok' if page <= last_page else 'exceeded last page of data'
     }
 
     response = jsonify(result)
