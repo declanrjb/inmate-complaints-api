@@ -92,10 +92,8 @@ function appendBackendArgs(argDict,pageOffset=0) {
 var backData = null;
 var frontData = null;
 var currentData = null;
-var lastPage = 1
 
 function updateDataLite(additionalArgs={}) {
-    console.log('updating data')
     showLoader()
     $.getJSON(makeRequest(appendBackendArgs(additionalArgs)), 
         function(data) {
@@ -136,20 +134,13 @@ function stopLoader() {
     $('.button').removeAttr('disabled')
 }
 
-function concatOptions(j_obj) {
-    var result = ''
-    j_obj.children('.chosen-choices').children('.search-choice').each(function() {
-        result += $(this).text() + ','
-    })
-    result = result.slice(0,result.length-1)
-    return(result)
-}
 
 function generateFilters() {
     var filters = {}
         $('.chosen-container').each(function() {
             if ($(this).attr('title') != 'Show_Columns') {
-                var optionArgForm = concatOptions($(this))
+                var optionArgForm = $(this).children('.chosen-single').text()
+                optionArgForm = optionArgForm.replaceAll('\n','').replaceAll(' ','')
                 if (optionArgForm.length > 0) {
                     filters[$(this).attr('title')] = optionArgForm
                 }
@@ -157,8 +148,6 @@ function generateFilters() {
         })
     return(filters)
 }
-
-console.log('the code is running')
 
 $(function() {
 
@@ -174,7 +163,6 @@ $(function() {
         updateDataCached(filters)
     })
     
-    console.log('calling function')
     updateDataLite(generateFilters())
     updateDataCached(generateFilters())
 
@@ -213,7 +201,8 @@ $(function() {
 
     /* right button behavior */
     $('#right-button').on('click', function() {
-        if (!($(this).attr('disabled') == 'disabled') && ($('#page-counter').val() <= lastPage)) {
+        console.log('button clicked')
+        if (!($(this).attr('disabled') == 'disabled')) {
             $('#page-counter').val(parseInt($('#page-counter').val())+1)
             if ((frontData != null) && (currentData != frontData)) {
                 updateTable(frontData)

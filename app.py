@@ -109,7 +109,7 @@ def complaint():
     page = int(request.args['page']) if 'page' in request.args else 0
 
     segment_start = page*show
-    segment_end = (page*show)+show
+    segment_end = segment_start+show
 
     # clone all the other arguments into a dictionary by which to filter the data
     entry_filter = request.args.copy()
