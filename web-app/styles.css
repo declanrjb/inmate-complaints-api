@@ -75,6 +75,9 @@ th {
 
 .loading {
     float: right;
+}
+
+.fa-spinner {
     display: none;
 }
 
@@ -104,6 +107,48 @@ th {
 .about-dashboard {
     margin-top: 5px;
     margin-left: 5px;
+    margin-bottom: 5px;
+}
+
+.filter-controls {
+    margin-top: 10px;
+}
+
+.chosen-container {
+    margin: 5px;
+    margin-top: 0px;
+    width: calc(100% - 20px) !important;
+}
+
+.search-choice {
+    background-color: white !important;
+    background-image: none !important;
+}
+
+.filter-label {
+    margin: 10px;
+    margin-left: 5px;
+    margin-bottom: 2px;
+    font-weight: 600;
+    font-size: 1em;
+    font-family: serif;
+    color: #202121;
+}
+
+.submit-button {
+    margin: 5px;
+    margin-top: 10px;
+    width: calc(100% - 20px);
+    background-color: #fb8b24;
+    border: none;
+    color: white;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 20px;
+}
+
+.submit-button:hover {
+    background-color: #f61713;
 }
 
 @-webkit-keyframes rotating /* Safari and Chrome */ {

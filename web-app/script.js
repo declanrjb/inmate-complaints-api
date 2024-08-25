@@ -1,10 +1,4 @@
-var myList = [
-    { "name": "abc", "age": 50 },
-    { "age": "25", "hobby": "swimming" },
-    { "name": "xyz", "hobby": "programming" }
-  ];
-  
-  // Builds the HTML Table out of myList.
+   // Builds the HTML Table out of myList.
   function buildHtmlTable(selector,data) {
     var columns = addAllColumnHeaders(data, selector);
   
@@ -26,7 +20,7 @@ var myList = [
     var columnSet = [];
     var headerTr$ = $('<tr/>');
   
-    for (var i = 0; i < myList.length; i++) {
+    for (var i = 0; i < data.length; i++) {
       var rowHash = data[i];
       for (var key in rowHash) {
         if ($.inArray(key, columnSet) == -1) {
@@ -52,6 +46,8 @@ function makeRequest(parameters,base='https://inmate-complaints-api-1.onrender.c
     if (request[request.length-1] == '&') {
         request = request.slice(0,request.length-1)
     }
+
+    console.log(request)
 
     return(request)
 }
@@ -82,19 +78,26 @@ function updateTable(data) {
     })
 }
 
+function appendBackendArgs(argDict,pageOffset=0) {
+    var result = Object.assign({},
+                                argDict,
+                                {
+                                    'show':$('#show-counter').val(),
+                                    /*'page':Math.min(($('#page-counter').val()-1+pageOffset),0)*/
+                                    'page':0
+                                }
+                            )
+    return(result)
+}
+
 var backData = null;
 var frontData = null;
 var currentData = null;
 var lastPage = 1
 
-function updateDataLite() {
+function updateDataLite(additionalArgs={}) {
     showLoader()
-    $.getJSON(makeRequest(
-        {
-            'Case_Status':'Accepted',
-            'show':$('#show-counter').val(),
-            'page':$('#page-counter').val()
-        }), 
+    $.getJSON(makeRequest(appendBackendArgs(additionalArgs)), 
         function(data) {
             lastPage = data['metadata']['last_page']
             stopLoader()
@@ -103,24 +106,14 @@ function updateDataLite() {
     )
 }
 
-function updateDataCached() {
+function updateDataCached(additionalArgs={}) {
     showLoader()
-    $.getJSON(makeRequest(
-        {
-            'Case_Status':'Accepted',
-            'show':$('#show-counter').val(),
-            'page':$('#page-counter').val()+1
-        }), 
+    $.getJSON(makeRequest(appendBackendArgs(additionalArgs,pageOffset=1)), 
         function(data) {
             frontData = data
         }
     )
-    $.getJSON(makeRequest(
-        {
-            'Case_Status':'Accepted',
-            'show':$('#show-counter').val(),
-            'page':$('#page-counter').val()-1
-        }), 
+    $.getJSON(makeRequest(appendBackendArgs(additionalArgs,pageOffset=-1)), 
         function(data) {
             backData = data
             stopLoader()
@@ -129,13 +122,22 @@ function updateDataCached() {
 }
 
 function showLoader() {
-    $('.loading').css('display','block')
+    $('.fa-spinner').css('display','block')
     $('.button').attr('disabled','disabled')
 }
 
 function stopLoader() {
-    $('.loading').css('display','none')
+    $('.fa-spinner').css('display','none')
     $('.button').removeAttr('disabled')
+}
+
+function concatOptions(j_obj) {
+    var result = ''
+    j_obj.children('.chosen-choices').children('.search-choice').each(function() {
+        result += $(this).text() + ','
+    })
+    result = result.slice(0,result.length-1)
+    return(result)
 }
 
 $(function() {
@@ -205,6 +207,18 @@ $(function() {
     $(".chosen-select").chosen({
         no_results_text: "Oops, nothing found!"
       })
+
+    $('.submit-button').on('click', function() {
+        var filters = {}
+        $('.chosen-container').each(function() {
+            if ($(this).attr('title') != 'Show_Columns') {
+                var optionArgForm = concatOptions($(this))
+                if (optionArgForm.length > 0) {
+                    filters[$(this).attr('title')] = optionArgForm
+                }
+            }
+        })
+    })
 
     
  

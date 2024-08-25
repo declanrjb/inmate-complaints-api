@@ -107,22 +107,30 @@ def complaint():
     entry_filter.pop('page',None)
     entry_filter.pop('cols',None)
 
-    # permute combined filters to match sqlite requirements
-    entry_filter = dict_listify(entry_filter)
-    permuted_filters = dict_permute(entry_filter)
+    if bool(entry_filter):
+        # permute combined filters to match sqlite requirements
+        entry_filter = dict_listify(entry_filter)
+        permuted_filters = dict_permute(entry_filter)
 
-    # pull out all the entries that match the filter and convert them to readable format
-    all_cases = []
-    for permuted_filter in permuted_filters:
-        # change complaints to the name of the current database
-        entries = Complaints.query.filter_by(**permuted_filter)
+        # pull out all the entries that match the filter and convert them to readable format
+        all_cases = []
+        for permuted_filter in permuted_filters:
+            # change complaints to the name of the current database
+            entries = Complaints.query.filter_by(**permuted_filter)
 
+            if 'cols' in request.args:
+                cases = [{var:getattr(entry,var) for var in request.args['cols'].split(',')} for entry in entries]
+            else:
+                cases = [{var:getattr(entry,var) for var in entry.return_fields()} for entry in entries]
+            
+            all_cases = all_cases + cases
+    else:
+        entries = Complaints.query.all()
         if 'cols' in request.args:
             cases = [{var:getattr(entry,var) for var in request.args['cols'].split(',')} for entry in entries]
         else:
             cases = [{var:getattr(entry,var) for var in entry.return_fields()} for entry in entries]
-        
-        all_cases = all_cases + cases
+        all_cases = cases
 
     last_page = math.ceil(len(all_cases) / show) - 1
 
