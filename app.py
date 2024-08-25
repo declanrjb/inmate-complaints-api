@@ -132,10 +132,12 @@ def complaint():
 
         #     if len(all_entries) >= segment_end:
         #         break
-        displayed_entries = Complaints.query.filter_by(**entry_filter)[segment_start:segment_end]
+        displayed_entries = Complaints.query.filter_by(**entry_filter)
             
     else:
-        displayed_entries = Complaints.query.all()[segment_start:segment_end]
+        displayed_entries = Complaints.query.all()
+
+    displayed_entries = list(displayed_entries)[segment_start:segment_end]
 
     #displayed_entries = all_entries[segment_start:segment_end]
     if 'cols' in request.args:
@@ -158,7 +160,11 @@ def complaint():
         #'status':'ok' if page <= last_page else 'exceeded last page of data'
     }
 
-    response = jsonify(result)
+    response = jsonify({
+        'start':segment_start,
+        'end':segment_end,
+        'length':len(displayed_entries)
+    })
     response.headers.add('Access-Control-Allow-Origin', '*')
 
     return response
