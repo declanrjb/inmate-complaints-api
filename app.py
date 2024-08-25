@@ -119,19 +119,20 @@ def complaint():
 
     if bool(entry_filter):
         # permute combined filters to match sqlite requirements
-        entry_filter = dict_listify(entry_filter)
-        permuted_filters = dict_permute(entry_filter)
+        # entry_filter = dict_listify(entry_filter)
+        # permuted_filters = dict_permute(entry_filter)
 
         # pull out all the entries that match the filter and convert them to readable format
-        all_entries = []
-        for permuted_filter in permuted_filters:
-            # change complaints to the name of the current database
-            entries = Complaints.query.filter_by(**permuted_filter)
+        # all_entries = []
+        # for permuted_filter in permuted_filters:
+        #     # change complaints to the name of the current database
+        #     entries = Complaints.query.filter_by(**permuted_filter)
             
-            all_entries = all_entries + list(entries)
+        #     all_entries = all_entries + list(entries)
 
-            if len(all_entries) >= segment_end:
-                break
+        #     if len(all_entries) >= segment_end:
+        #         break
+        all_entries = Complaints.query.filter_by(**entry_filter)
             
     else:
         all_entries = Complaints.query.all()
@@ -142,19 +143,19 @@ def complaint():
     else:
         displayed_cases = [{var:getattr(entry,var) for var in entry.return_fields()} for entry in displayed_entries]
 
-    total_entries = len(list(all_entries))
+    #total_entries = len(list(all_entries))
 
-    last_page = math.ceil(total_entries / show) - 1
+    #last_page = math.ceil(total_entries / show) - 1
 
     result = {
         'metadata':{
-            'total_results':total_entries,
+            #'total_results':total_entries,
             'results_shown':len(displayed_cases),
-            'last_page':last_page,
+            #'last_page':last_page,
             'current_page':page
         },
         'cases':displayed_cases,
-        'status':'ok' if page <= last_page else 'exceeded last page of data'
+        #'status':'ok' if page <= last_page else 'exceeded last page of data'
     }
 
     response = jsonify(result)
