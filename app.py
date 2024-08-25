@@ -5,7 +5,6 @@ import os
 from flask import Flask, jsonify, request
 import math
 import itertools
-import numpy
 
 # data processing functions
 def dict_listify(dictionary):
