@@ -141,13 +141,14 @@ function generateFilters() {
     var filters = {}
         $('.chosen-container').each(function() {
             if ($(this).attr('title') != 'Show_Columns') {
-                var optionArgForm = $(this).children('.chosen-single').text()
-                optionArgForm = optionArgForm.replaceAll('\n','').replaceAll(' ','')
-                if (optionArgForm.length > 0) {
+                var optionArgForm = $(this).children('.chosen-single').children('span').text()
+                optionArgForm = optionArgForm.replaceAll('\n','')
+                if (optionArgForm.replaceAll(' ','').length > 0) {
                     filters[$(this).attr('title')] = optionArgForm
                 }
             }
         })
+    console.log(filters)
     return(filters)
 }
 
@@ -171,6 +172,8 @@ $(function() {
             .val('').trigger('chosen:updated')
 
             $('.chosen-select[title="Case_Status"]').val('Rejected').trigger('chosen:updated')
+
+            updateDataLite(generateFilters())
         }
     )
 
@@ -178,13 +181,10 @@ $(function() {
 
     $('.submit-button').on('click', function() {
         filters = generateFilters()
-        console.log(filters)
         updateDataLite(filters)
-        updateDataCached(filters)
     })
     
-    updateDataLite(generateFilters())
-    updateDataCached(generateFilters())
+
 
     $('#show-counter').on('input', function() {
         updateDataLite(generateFilters())
@@ -192,7 +192,6 @@ $(function() {
 
     $('#page-counter').on('input', function() {
         updateDataLite(generateFilters())
-        updateDataCached(generateFilters())
     })
 
     /* left button behavior */
@@ -204,7 +203,6 @@ $(function() {
             } else {
                 updateDataLite(generateFilters())
             }
-            updateDataCached(generateFilters())
         }
     })
 
@@ -229,7 +227,6 @@ $(function() {
             } else {
                 updateDataLite(generateFilters())
             }
-            updateDataCached(generateFilters())
         }
     })
 
@@ -244,11 +241,5 @@ $(function() {
         $(this).removeClass('fa-regular').removeClass('fa-circle-right')
     })
 
-
-
-
-
-    
- 
 });
 
