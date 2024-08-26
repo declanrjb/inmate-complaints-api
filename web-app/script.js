@@ -50,7 +50,6 @@ function makeRequest(parameters,base='https://inmate-complaints-api-1.onrender.c
     }
 
     console.log(request)
-
     return(request)
 }
 
@@ -150,7 +149,12 @@ function generateFilters() {
                 }
             }
         })
-    console.log(filters)
+        $('.date-select').each(function() {
+            var setDate = $(this).val()
+            if (setDate.length > 0) {
+                filters[$(this).attr('title')] = setDate
+            }
+        })
     return(filters)
 }
 
@@ -169,8 +173,7 @@ function listReplaceAll(ls,old_char,new_char) {
 
 function rebuildFilters() {
     var shown = listReplaceAll($('#col-selector').val(),' ','_')
-    $('.chosen-container-single, .filter-label').each(function() {
-        console.log($(this).attr('title'))
+    $('.chosen-container-single, .filter-label, .date-select').each(function() {
         if (shown.includes($(this).attr('title'))) {
             $(this).css('display','block')
         } else {
@@ -195,7 +198,12 @@ $(function() {
                 var filterTitle = String(this)
                 if (!(notFiltered.includes(filterTitle))) {
                     filterPanel.append('<p class="filter-label" title="' + filterTitle + '">' + filterTitle.replace('_',' ') + '</p>')
-                    filterPanel.append('<select data-placeholder=" " class="chosen-select filter-select" name="' + this + '" title="' + this + '"></select>')
+                    if (filterTitle.toLowerCase().includes('date')) {
+                        filterPanel.append('<input type="date" class="date-select" name="' + this + '" title="' + this + '"></select>')
+                    } else {
+                        filterPanel.append('<select data-placeholder=" " class="chosen-select filter-select" name="' + this + '" title="' + this + '"></select>')
+                    }
+                    
                 }
             })
         
@@ -229,6 +237,11 @@ $(function() {
             .change(function() {
                 submitQuery()
                 rebuildFilters()
+            })
+
+            $('.date-select').on('input', function() {
+                console.log('date changed')
+                submitQuery()
             })
 
             rebuildFilters()
@@ -275,7 +288,6 @@ $(function() {
 
     /* right button behavior */
     $('#right-button').on('click', function() {
-        console.log('button clicked')
         if (!($(this).attr('disabled') == 'disabled')) {
             $('#page-counter').val(parseInt($('#page-counter').val())+1)
             if ((frontData != null) && (currentData != frontData)) {
