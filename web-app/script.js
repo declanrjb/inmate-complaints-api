@@ -38,6 +38,8 @@ function makeRequest(parameters,base='https://inmate-complaints-api-1.onrender.c
     var request = base + '?'
 
     request += 'cols=' + $('#col-selector').val().join(',') + '&'
+    request = request.replaceAll(' ','_')
+
 
     $.each(parameters, function(key, value) {
         request += key + '=' + value + '&'
@@ -157,24 +159,60 @@ function submitQuery() {
     updateDataLite(filters)
 }
 
+function listReplaceAll(ls,old_char,new_char) {
+    var cleanedLs = []
+    for (var i=0; i<ls.length; i++) {
+        cleanedLs.push(ls[i].replaceAll(old_char,new_char))
+    }
+    return(cleanedLs)
+}
+
+function rebuildFilters() {
+    var shown = listReplaceAll($('#col-selector').val(),' ','_')
+    $('.chosen-container-single, .filter-label').each(function() {
+        console.log($(this).attr('title'))
+        if (shown.includes($(this).attr('title'))) {
+            $(this).css('display','block')
+        } else {
+            $(this).css('display','none')
+        }
+    })
+}
+
 $(function() {
 
     $('.row').height($(document).height() - 20)
 
     $.getJSON('web-app/data-summary.json', 
         function(data) {
+            var starterCols = ['Case_Number','Case_Status','Facility_Occurred','Received_Date','State','Subject_Primary']
+            var notFiltered = ['Case_Number']
+
+            var filterPanel = $('.filter-controls')
+
+            /* add a filter for each item in data dictionary */
+            $(data['Show_Columns']).each(function() {
+                var filterTitle = String(this)
+                if (!(notFiltered.includes(filterTitle))) {
+                    filterPanel.append('<p class="filter-label" title="' + filterTitle + '">' + filterTitle.replace('_',' ') + '</p>')
+                    filterPanel.append('<select data-placeholder=" " class="chosen-select filter-select" name="' + this + '" title="' + this + '"></select>')
+                }
+            })
+        
+            /* load each of those filters with options. also load show column selector */
             $('.chosen-select').each(function() {
                 var currSelector = $(this)
                 currSelector.append('<option></option>')
                 var selectTitle = currSelector.attr('title')
                 var options = data[selectTitle]
                 $(options).each(function() {
-                    currSelector.append('<option>' + this + '</option>')
+                    currSelector.append('<option>' + this.replaceAll('_',' ') + '</option>')
                 })
             })
-            $(".chosen-select").chosen({
+            
+            /* activate all chosen selectors, update them, and set update data on interact */
+            $(".filter-select").chosen({
                 no_results_text: "Oops, nothing found!",
-                max_selected_options: 6,
                 allow_single_deselect: true
             })
             .val('').trigger('chosen:updated')
@@ -182,8 +220,20 @@ $(function() {
                 submitQuery()
             })
 
-            $('.chosen-select[title="Show_Columns"]').val(['Case_Number','Case_Status','Facility_Occurred','Received_Date','State','Subject_Primary']).trigger('chosen:updated')
+            /* set the value of column selector to defaults, and init it */
+            $('.chosen-select[title="Show_Columns"]').chosen({
+                no_results_text: "Oops, nothing found!",
+                max_selected_options: 6
+            })
+            .val(listReplaceAll(starterCols,'_',' ')).trigger('chosen:updated')
+            .change(function() {
+                submitQuery()
+                rebuildFilters()
+            })
 
+            rebuildFilters()
+
+            /* update table with current filters */
             updateDataLite(generateFilters())
         }
     )
