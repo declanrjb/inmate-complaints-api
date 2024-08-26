@@ -66,40 +66,28 @@ class Complaints(db.Model):
     Case_Status = db.Column(db.String)
     Subject_Primary = db.Column(db.String)
     Subject_Secondary = db.Column(db.String)
-    Org_Level = db.Column(db.String)
-    Received_Office = db.Column(db.String)
     Facility_Occurred = db.Column(db.String)
     Facility_Received = db.Column(db.String)
     Received_Date = db.Column(db.Date)
     Due_Date = db.Column(db.Date)
     Latest_Status_Date = db.Column(db.Date)
     Status_Reasons = db.Column(db.String)
-    Facility_Address = db.Column(db.String)
-    Lat = db.Column(db.Float)
-    Long = db.Column(db.Float)
     City = db.Column(db.String)
     State = db.Column(db.String)
-    Fac_Coords_Method = db.Column(db.String)
 
     def return_fields(complaint):
         return ['Case_Number',
                 'Case_Status',
                 'Subject_Primary',
                 'Subject_Secondary',
-                'Org_Level',
-                'Received_Office',
                 'Facility_Occurred',
                 'Facility_Received',
                 'Received_Date',
                 'Due_Date',
                 'Latest_Status_Date',
                 'Status_Reasons',
-                'Facility_Address',
-                'Lat',
-                'Long',
                 'City',
-                'State',
-                'Fac_Coords_Method']
+                'State']
 
 # no modification required beyond function made
 @app.route('/complaints')
