@@ -165,6 +165,7 @@ $(function() {
         function(data) {
             $('.chosen-select').each(function() {
                 var currSelector = $(this)
+                currSelector.append('<option></option>')
                 var selectTitle = currSelector.attr('title')
                 var options = data[selectTitle]
                 $(options).each(function() {
@@ -173,14 +174,13 @@ $(function() {
             })
             $(".chosen-select").chosen({
                 no_results_text: "Oops, nothing found!",
-                max_selected_options: 6
+                max_selected_options: 6,
+                allow_single_deselect: true
             })
             .val('').trigger('chosen:updated')
             .change(function() {
                 submitQuery()
             })
-
-            $('.chosen-select[title="Case_Status"]').val('Rejected').trigger('chosen:updated')
 
             $('.chosen-select[title="Show_Columns"]').val(['Case_Number','Case_Status','Facility_Occurred','Received_Date','State','Subject_Primary']).trigger('chosen:updated')
 
