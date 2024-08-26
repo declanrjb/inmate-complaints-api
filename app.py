@@ -108,7 +108,7 @@ def complaint():
     if bool(entry_filter):
         displayed_entries = Complaints.query.filter_by(**entry_filter)[segment_start:segment_end]
     else:
-        displayed_entries = Complaints.query.all()[segment_start:segment_end]
+        displayed_entries = Complaints.query.limit(segment_end*2).all()[segment_start:segment_end]
 
     if 'cols' in request.args:
         displayed_cases = [{var:getattr(entry,var) for var in request.args['cols'].split(',')} for entry in displayed_entries]
