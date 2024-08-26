@@ -75,6 +75,9 @@ th {
 
 .loading {
     float: right;
+    position: absolute;
+    right: 20px;
+    top: 14px;
 }
 
 .fa-spinner {
@@ -169,7 +172,7 @@ a[href]:hover {
 
 #col_selector_chosen {
     float: right;
-    width: 65% !important;
+    width: 75% !important;
 }
 
 .date-select {

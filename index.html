@@ -21,32 +21,13 @@
                 complaint/appeal submissions filed by federal prison inmates over 24 years, published by the Data Liberation Project.
                 For access to raw data, see the <a href="https://www.data-liberation-project.org/datasets/federal-inmate-complaints/">DLP's website</a>. For API documentation, see this <a href="https://github.com/declanrjb/inmate-complaints-api">repository <i class="fa-brands fa-github"></i></a>. Developed by <a href="https://declanrjb.com">Declan Bradley</a>.</p>
             <div class="filter-controls">
-                <!--
-                <p class="filter-label">State</p>
-                <select data-placeholder=" " class="chosen-select" name="State" title="State"></select>
-
-                <p class="filter-label">Primary Subject</p>
-                <select data-placeholder=" " class="chosen-select" title="Subject_Primary"></select>
-
-                <p class="filter-label">Secondary Subject</p>
-                <select data-placeholder=" " class="chosen-select" title="Subject_Secondary"></select>
-
-                <p class="filter-label">Facility Occurred</p>
-                <select data-placeholder=" " class="chosen-select" title="Facility_Occurred"></select>
-
-                <p class="filter-label">Case Status</p>
-                <select data-placeholder=" " class="chosen-select" title="Case_Status"></select>
-                -->
-
                 <button class="submit-button">Submit Query</button>
             </div>
         </div>
         <div class="column" id="table-column">
             <div class="table-control">
                 <div class="show-wrapper">Show <input type="number" class="counter" id="show-counter" min="10" max="100" value=15> rows</div>
-                <select data-placeholder=" " multiple="" tabindex="-1" class="chosen-select" title="Show_Columns" id="col-selector">
-
-                </select>
+                <select data-placeholder=" " multiple="" tabindex="-1" class="chosen-select" title="Show_Columns" id="col-selector"></select>
                 <div class="loading rotating"><i class="fa-solid fa-spinner"></i></div>
             </div>
             <table id="data-table"></table>
