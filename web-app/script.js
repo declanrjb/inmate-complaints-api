@@ -204,7 +204,7 @@ $(function() {
                 }
             })
 
-            filterPanel.append('<button class="download-current">Download <= 100,000 (CSV) <i class="fa-solid fa-download"></i></button>')
+            filterPanel.append('<button class="download-current">Download CSV <i class="fa-solid fa-download"></i></button>')
         
             /* load each of those filters with options. also load show column selector */
             $('.chosen-select').each(function() {
