@@ -141,6 +141,20 @@ function generateFilters() {
     return(filters)
 }
 
+function flattenDict(dict) {
+    var result = ''
+    var dict_keys = Object.keys(dict)
+    console.log(dict_keys)
+    for (var i=0; i<dict_keys.length; i++) {
+        result += dict_keys[i]
+        result += '-'
+        result += dict[dict_keys[i]]
+        result += '_'
+    }
+    result = result.slice(0,result.length-1)
+    return(result)
+}
+
 function submitQuery() {
     filters = generateFilters()
     updateDataLite(filters)
@@ -189,6 +203,8 @@ $(function() {
                     
                 }
             })
+
+            filterPanel.append('<button class="download-current">Download <= 100,000 (CSV) <i class="fa-solid fa-download"></i></button>')
         
             /* load each of those filters with options. also load show column selector */
             $('.chosen-select').each(function() {
@@ -214,7 +230,7 @@ $(function() {
             /* set the value of column selector to defaults, and init it */
             $('.chosen-select[title="Show_Columns"]').chosen({
                 no_results_text: "Oops, nothing found!",
-                max_selected_options: 6
+                max_selected_options: 8
             })
             .val(listReplaceAll(starterCols,'_',' ')).trigger('chosen:updated')
             .change(function() {
@@ -231,6 +247,31 @@ $(function() {
 
             /* update table with current filters */
             updateDataLite(generateFilters())
+
+            $('.download-current').on('click',function() {
+                var filters = generateFilters()
+                var downloadURL = makeRequest(filters) + '&format=csv' + '&show=100000'
+                console.log(downloadURL)
+                /*
+                var fileName = downloadURL.replace('https://inmate-complaints-api-1.onrender.com/complaints?','')
+                fileName = fileName.replaceAll('=','-').replaceAll(' ','_').replaceAll('&','_')
+                */
+                var fileName = 'inmate-complaints_' + flattenDict(filters) + '.csv'
+                fetch(downloadURL)
+                    // check to make sure you didn't have an unexpected failure (may need to check other things here depending on use case / backend)
+                    .then(resp => resp.status === 200 ? resp.blob() : Promise.reject('something went wrong'))
+                    .then(blob => {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        // the filename you want
+                        a.download = fileName;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                    })
+            })
         }
     )
 

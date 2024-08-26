@@ -148,7 +148,7 @@ th {
     font-weight: bold;
     padding: 10px;
     border-radius: 20px;
-    display: none;
+    display: block;
 }
 
 .submit-button:hover {
@@ -184,6 +184,21 @@ a[href]:hover {
     border-radius: 5px;
     box-shadow: 0 0 3px #fff inset,0 1px 1px rgba(0,0,0,.1);
     padding: 4px;
+}
+
+.download-current {
+    background-color: transparent;
+    border: none;
+    color: grey;
+    font-weight: bold;
+    font-size: 1em;
+    text-align: right;
+    width: calc(100% - 10px);
+    margin-top: 15px;
+}
+
+.download-current:hover {
+    color: darkblue;
 }
 
 @-webkit-keyframes rotating /* Safari and Chrome */ {
