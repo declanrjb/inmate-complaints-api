@@ -17,13 +17,12 @@
         <div class="column" id="control-column">
             <a href="https://www.data-liberation-project.org/" style="text-decoration: none;"><p class="brand-tag">Data Liberation Project</p></a>
             <h2 class="page-title">Inmate Complaints</h2>
-            <p class="about-dashboard">Exploratory analysis interface. Developed by Declan Bradley <i class="fa-brands fa-github"></i></p>
+            <p class="about-dashboard">Exploratory interface for 1.78 million 
+                complaint/appeal submissions filed by federal prison inmates over 24 years, published by the Data Liberation Project.
+                For access to raw data, see the <a href="https://www.data-liberation-project.org/datasets/federal-inmate-complaints/">DLP's website</a>. For API documentation, see this <a href="https://github.com/declanrjb/inmate-complaints-api">repository <i class="fa-brands fa-github"></i></a>. Developed by <a href="https://declanrjb.com">Declan Bradley</a>.</p>
             <div class="filter-controls">
                 <p class="filter-label">State</p>
-                <select data-placeholder=" " class="chosen-select" name="State" title="State">
-                    <option>California</option>
-                    <option>Nevada</option>
-                </select>
+                <select data-placeholder=" " class="chosen-select" name="State" title="State"></select>
 
                 <p class="filter-label">Primary Subject</p>
                 <select data-placeholder=" " class="chosen-select" title="Subject_Primary"></select>
@@ -36,9 +35,10 @@
 
                 <p class="filter-label">Case Status</p>
                 <select data-placeholder=" " class="chosen-select" title="Case_Status"></select>
-
+                <!--
                 <p class="filter-label">Show Columns</p>
                 <select data-placeholder=" " class="chosen-select" title="Show_Columns"></select>
+                -->
 
                 <button class="submit-button">Submit Query</button>
             </div>

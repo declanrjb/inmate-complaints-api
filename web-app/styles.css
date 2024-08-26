@@ -156,6 +156,16 @@ th {
     
 }
 
+a[href] {
+    text-decoration: none;
+    font-weight: 650;
+    color: orangered;
+}
+
+a[href]:hover {
+    color: darkblue;
+}
+
 @-webkit-keyframes rotating /* Safari and Chrome */ {
     from {
       -webkit-transform: rotate(0deg);
