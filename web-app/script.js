@@ -37,7 +37,7 @@
 function makeRequest(parameters,base='https://inmate-complaints-api-1.onrender.com/complaints') {
     var request = base + '?'
 
-    request += 'cols=' + ['Case_Number','Case_Status','Subject_Primary','Facility_Occurred','Received_Date','State'].join(',') + '&'
+    request += 'cols=' + $('#col-selector').val().join(',') + '&'
 
     $.each(parameters, function(key, value) {
         request += key + '=' + value + '&'
@@ -105,7 +105,7 @@ function updateDataLite(additionalArgs={}) {
     .fail(function() { 
         console.log('update data lite api call error, retrying')
         stopLoader()
-        updateDataLite()
+        updateDataLite(generateFilters())
      })
 }
 
@@ -152,6 +152,11 @@ function generateFilters() {
     return(filters)
 }
 
+function submitQuery() {
+    filters = generateFilters()
+    updateDataLite(filters)
+}
+
 $(function() {
 
     $('.row').height($(document).height() - 20)
@@ -167,24 +172,25 @@ $(function() {
                 })
             })
             $(".chosen-select").chosen({
-                no_results_text: "Oops, nothing found!"
+                no_results_text: "Oops, nothing found!",
+                max_selected_options: 6
             })
             .val('').trigger('chosen:updated')
+            .change(function() {
+                submitQuery()
+            })
 
             $('.chosen-select[title="Case_Status"]').val('Rejected').trigger('chosen:updated')
+
+            $('.chosen-select[title="Show_Columns"]').val(['Case_Number','Case_Status','Facility_Occurred','Received_Date','State','Subject_Primary']).trigger('chosen:updated')
 
             updateDataLite(generateFilters())
         }
     )
 
-
-
     $('.submit-button').on('click', function() {
-        filters = generateFilters()
-        updateDataLite(filters)
+        submitQuery()
     })
-    
-
 
     $('#show-counter').on('input', function() {
         updateDataLite(generateFilters())

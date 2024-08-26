@@ -35,10 +35,6 @@
 
                 <p class="filter-label">Case Status</p>
                 <select data-placeholder=" " class="chosen-select" title="Case_Status"></select>
-                <!--
-                <p class="filter-label">Show Columns</p>
-                <select data-placeholder=" " class="chosen-select" title="Show_Columns"></select>
-                -->
 
                 <button class="submit-button">Submit Query</button>
             </div>
@@ -46,6 +42,9 @@
         <div class="column" id="table-column">
             <div class="table-control">
                 <div class="show-wrapper">Show <input type="number" class="counter" id="show-counter" min="10" max="100" value=15> rows</div>
+                <select data-placeholder=" " multiple="" tabindex="-1" class="chosen-select" title="Show_Columns" id="col-selector">
+
+                </select>
                 <div class="loading rotating"><i class="fa-solid fa-spinner"></i></div>
             </div>
             <table id="data-table"></table>

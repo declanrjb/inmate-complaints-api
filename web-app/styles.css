@@ -145,6 +145,7 @@ th {
     font-weight: bold;
     padding: 10px;
     border-radius: 20px;
+    display: none;
 }
 
 .submit-button:hover {
@@ -164,6 +165,11 @@ a[href] {
 
 a[href]:hover {
     color: darkblue;
+}
+
+#col_selector_chosen {
+    float: right;
+    width: 65% !important;
 }
 
 @-webkit-keyframes rotating /* Safari and Chrome */ {
