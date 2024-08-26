@@ -110,6 +110,7 @@ function updateDataLite(additionalArgs={}) {
 }
 
 function updateDataCached(additionalArgs={}) {
+    /*
     showLoader()
     $.getJSON(makeRequest(appendBackendArgs(additionalArgs,pageOffset=1)), 
         function(data) {
@@ -122,6 +123,7 @@ function updateDataCached(additionalArgs={}) {
             stopLoader()
         }
     )
+    */
 }
 
 function showLoader() {
@@ -153,12 +155,30 @@ $(function() {
 
     $('.row').height($(document).height() - 20)
 
-    $(".chosen-select").chosen({
-        no_results_text: "Oops, nothing found!"
-      })
+    $.getJSON('web-app/data-summary.json', 
+        function(data) {
+            $('.chosen-select').each(function() {
+                var currSelector = $(this)
+                var selectTitle = currSelector.attr('title')
+                var options = data[selectTitle]
+                $(options).each(function() {
+                    currSelector.append('<option>' + this + '</option>')
+                })
+            })
+            $(".chosen-select").chosen({
+                no_results_text: "Oops, nothing found!"
+            })
+            .val('').trigger('chosen:updated')
+
+            $('.chosen-select[title="Case_Status"]').val('Rejected').trigger('chosen:updated')
+        }
+    )
+
+
 
     $('.submit-button').on('click', function() {
         filters = generateFilters()
+        console.log(filters)
         updateDataLite(filters)
         updateDataCached(filters)
     })
@@ -223,6 +243,8 @@ $(function() {
         $(this).addClass('fa-circle-arrow-right').addClass('fa-solid')
         $(this).removeClass('fa-regular').removeClass('fa-circle-right')
     })
+
+
 
 
 

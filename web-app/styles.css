@@ -151,6 +151,11 @@ th {
     background-color: #f61713;
 }
 
+.chosen-single {
+    background: white !important;
+    
+}
+
 @-webkit-keyframes rotating /* Safari and Chrome */ {
     from {
       -webkit-transform: rotate(0deg);
