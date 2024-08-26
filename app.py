@@ -132,12 +132,9 @@ def complaint():
 
         #     if len(all_entries) >= segment_end:
         #         break
-        all_entries = Complaints.query.filter_by(**entry_filter)
-            
+        displayed_entries = Complaints.query.filter_by(**entry_filter)[segment_start:segment_end]
     else:
-        all_entries = Complaints.query.all()
-
-    displayed_entries = list(all_entries)[segment_start:segment_end]
+        displayed_entries = Complaints.query.all()[segment_start:segment_end]
 
     #displayed_entries = all_entries[segment_start:segment_end]
     if 'cols' in request.args:
