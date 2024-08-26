@@ -10,36 +10,6 @@ import itertools
 def dict_listify(dictionary):
     return {k: dictionary[k].split(',') if ',' in dictionary[k] else dictionary[k] for k in dictionary}
 
-def dict_concatenate(dictionaries):
-    result = {}
-    for dictionary in dictionaries:
-        for k in dictionary:
-            result[k] = dictionary[k]
-    return result
-
-def dict_permute(dictionary):
-    multi_dict = {}
-    single_dict = {}
-    for k in dictionary:
-        if type(dictionary[k]) is list:
-            multi_dict[k] = dictionary[k]
-        else:
-            single_dict[k] = dictionary[k]
-
-    multis_lists = list(multi_dict.values())
-    multis_keys = list(multi_dict.keys())
-
-    permutations = list(itertools.product(*multis_lists))
-    permuted_dicts = []
-    for permutation in permutations:
-        new_dict = {}
-        for i in range(0,len(permutation)):
-            new_dict[multis_keys[i]] = permutation[i]
-        new_dict = dict_concatenate([new_dict,single_dict])
-        permuted_dicts.append(new_dict)
-    
-    return permuted_dicts
-
 def unique(ls):
     output = []
     for x in ls:
@@ -89,7 +59,7 @@ class Complaints(db.Model):
                 'City',
                 'State']
 
-# no modification required beyond function made
+# no modification required beyond function name
 @app.route('/complaints')
 def complaint():
     # read in request arguments, default to preset values if not present

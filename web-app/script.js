@@ -110,23 +110,6 @@ function updateDataLite(additionalArgs={}) {
      })
 }
 
-function updateDataCached(additionalArgs={}) {
-    /*
-    showLoader()
-    $.getJSON(makeRequest(appendBackendArgs(additionalArgs,pageOffset=1)), 
-        function(data) {
-            frontData = data
-        }
-    )
-    $.getJSON(makeRequest(appendBackendArgs(additionalArgs,pageOffset=-1)), 
-        function(data) {
-            backData = data
-            stopLoader()
-        }
-    )
-    */
-}
-
 function showLoader() {
     $('.fa-spinner').css('display','block')
     $('.button').attr('disabled','disabled')
