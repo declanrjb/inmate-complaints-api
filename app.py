@@ -5,10 +5,14 @@ import os
 from flask import Flask, jsonify, request
 import math
 import itertools
+import flask_csv
 
 # data processing functions
 def dict_listify(dictionary):
     return {k: dictionary[k].split(',') if ',' in dictionary[k] else dictionary[k] for k in dictionary}
+
+def dict_flatten(dictionary):
+    return '_'.join([f'{k}-{dictionary[k]}' for k in dictionary])
 
 def unique(ls):
     output = []
@@ -65,6 +69,7 @@ def complaint():
     # read in request arguments, default to preset values if not present
     show = int(request.args['show']) if 'show' in request.args else 20
     page = int(request.args['page']) if 'page' in request.args else 0
+    data_format = request.args['format'] if 'format' in request.args else 'json'
 
     segment_start = page*show
     segment_end = segment_start+show
@@ -74,6 +79,7 @@ def complaint():
     entry_filter.pop('show',None)
     entry_filter.pop('page',None)
     entry_filter.pop('cols',None)
+    entry_filter.pop('format',None)
 
     if bool(entry_filter):
         displayed_entries = Complaints.query.filter_by(**entry_filter)[segment_start:segment_end]
@@ -93,7 +99,11 @@ def complaint():
         'cases':displayed_cases,
     }
 
-    response = jsonify(result)
+    if data_format == 'csv':
+        response = flask_csv.send_csv(displayed_cases,f'inmate-complaints_{dict_flatten(request.args)}.csv',displayed_cases[0].keys())
+    else:
+        response = jsonify(result)
+    
     response.headers.add('Access-Control-Allow-Origin', '*')
 
     return response
