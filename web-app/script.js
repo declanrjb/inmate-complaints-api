@@ -49,7 +49,6 @@ function makeRequest(parameters,base='https://inmate-complaints-api-1.onrender.c
         request = request.slice(0,request.length-1)
     }
 
-    console.log(request)
     return(request)
 }
 
@@ -104,7 +103,6 @@ function updateDataLite(additionalArgs={}) {
         }
     )
     .fail(function() { 
-        console.log('update data lite api call error, retrying')
         stopLoader()
         updateDataLite(generateFilters())
      })
@@ -144,7 +142,6 @@ function generateFilters() {
 function flattenDict(dict) {
     var result = ''
     var dict_keys = Object.keys(dict)
-    console.log(dict_keys)
     for (var i=0; i<dict_keys.length; i++) {
         result += dict_keys[i]
         result += '-'
@@ -239,7 +236,6 @@ $(function() {
             })
 
             $('.date-select').on('input', function() {
-                console.log('date changed')
                 submitQuery()
             })
 
@@ -251,12 +247,10 @@ $(function() {
             $('.download-current').on('click',function() {
                 var filters = generateFilters()
                 var downloadURL = makeRequest(filters) + '&format=csv' + '&show=100000'
-                console.log(downloadURL)
-                /*
-                var fileName = downloadURL.replace('https://inmate-complaints-api-1.onrender.com/complaints?','')
-                fileName = fileName.replaceAll('=','-').replaceAll(' ','_').replaceAll('&','_')
-                */
                 var fileName = 'inmate-complaints_' + flattenDict(filters) + '.csv'
+
+                $(this).html('Downloading... <i class="fa-solid fa-download"></i>')
+
                 fetch(downloadURL)
                     // check to make sure you didn't have an unexpected failure (may need to check other things here depending on use case / backend)
                     .then(resp => resp.status === 200 ? resp.blob() : Promise.reject('something went wrong'))
@@ -270,6 +264,7 @@ $(function() {
                         document.body.appendChild(a);
                         a.click();
                         window.URL.revokeObjectURL(url);
+                        $(this).html('Download CSV <i class="fa-solid fa-download"></i>')
                     })
             })
         }
