@@ -49,6 +49,8 @@ function makeRequest(parameters,base='https://inmate-complaints-api-1.onrender.c
         request = request.slice(0,request.length-1)
     }
 
+    console.log(request)
+
     return(request)
 }
 
@@ -176,6 +178,57 @@ function rebuildFilters() {
     })
 }
 
+function createCSV(data_list) {
+    var json = data_list
+    var fields = Object.keys(json[0])
+    var replacer = function(key, value) { return value === null ? '' : value } 
+    var csv = json.map(function(row){
+    return fields.map(function(fieldName){
+        return JSON.stringify(row[fieldName], replacer)
+    }).join(',')
+    })
+    csv.unshift(fields.join(',')) // add header column
+    csv = csv.join('\r\n');
+    return(csv)
+}
+
+function downloadCases(filters,page,chunkSize=15) {
+    var requestURL = makeRequest(filters) + '&show=' + chunkSize.toString() + '&page=' + page.toString()
+    var fileName = 'inmate-complaints_' + flattenDict(filters) + '_' + page.toString() + '.csv'
+    console.log(requestURL)
+    $.getJSON(requestURL, 
+        function(data) {
+            console.log('downloading: ' + requestURL)
+            num_cases = data['cases'].length
+            if (num_cases > 0) {
+                csv_data = createCSV(data['cases'])
+
+                var blob = new Blob([csv_data], {
+                    type: 'text/plain'
+                });
+
+                var link = document.createElement('a')
+                link.href = URL.createObjectURL(blob)
+                link.download = fileName
+                document.body.appendChild(link)
+                link.click()
+                document.body.removeChild(link)
+                
+                if (page <= 10) {
+                    downloadCases(filters,page+1,chunkSize)
+                } else {
+                    alert('Max file download reached. Please try again with a smaller query.')
+                    $('.download-current').html('Download CSV <i class="fa-solid fa-download"></i>')
+                }
+            } else {
+                alert('Download complete.')
+                $('.download-current').html('Download CSV <i class="fa-solid fa-download"></i>')
+            }
+        }
+    )
+
+}
+
 $(function() {
 
     $('.row').height($(document).height() - 20)
@@ -245,27 +298,9 @@ $(function() {
             updateDataLite(generateFilters())
 
             $('.download-current').on('click',function() {
-                var filters = generateFilters()
-                var downloadURL = makeRequest(filters) + '&format=csv' + '&show=100000'
-                var fileName = 'inmate-complaints_' + flattenDict(filters) + '.csv'
-
                 $(this).html('Downloading... <i class="fa-solid fa-download"></i>')
-
-                fetch(downloadURL)
-                    // check to make sure you didn't have an unexpected failure (may need to check other things here depending on use case / backend)
-                    .then(resp => resp.status === 200 ? resp.blob() : Promise.reject('something went wrong'))
-                    .then(blob => {
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement('a');
-                        a.style.display = 'none';
-                        a.href = url;
-                        // the filename you want
-                        a.download = fileName;
-                        document.body.appendChild(a);
-                        a.click();
-                        window.URL.revokeObjectURL(url);
-                        $(this).html('Download CSV <i class="fa-solid fa-download"></i>')
-                    })
+                var filters = generateFilters()
+                downloadCases(filters,0,100000)
             })
         }
     )
