@@ -1,3 +1,5 @@
+**Beta, currently under active development. Not an official publication of the DLP or its affiliates.**
+
 Exploratory interface for 1.78 million complaint/appeal submissions filed by federal prison inmates over 24 years, published by the Data Liberation Project. For access to raw data, see the DLP's website.
 
 # Using the Dashboard
@@ -18,4 +20,4 @@ customized by the user. Download CSV button exports up to 100,000 rows of data f
 displayed on screen.
 
 # API Access
-Documentation to come
+Rest API built with Render. Documentation tk
